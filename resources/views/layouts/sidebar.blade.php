@@ -1,0 +1,126 @@
+<!-- [ Sidebar Menu ] start -->
+<nav class="pc-sidebar">
+    <div class="navbar-wrapper">
+        <div class="m-header">
+            <a href="{{ route('dashboard') }}" class="b-brand text-primary">
+                <img src="{{ asset('assets/images/aykon-logo.png') }}" class="img-fluid logo-lg" alt="logo">
+            </a>
+        </div>
+        <div class="navbar-content">
+            <ul class="pc-navbar">
+                @auth
+                <li class="pc-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-dashboard"></i></span>
+                        <span class="pc-mtext">Dashboard</span>
+                    </a>
+                </li>
+
+                @if(auth()->user() && (auth()->user()->isAdmin() || auth()->user()->isManager()))
+                <li class="pc-item pc-caption">
+                    <label>HR Management</label>
+                    <i class="ti ti-users"></i>
+                </li>
+                
+                <li class="pc-item {{ request()->routeIs('employees.*') ? 'active' : '' }}">
+                    <a href="{{ route('employees.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-user"></i></span>
+                        <span class="pc-mtext">Employees</span>
+                    </a>
+                </li>
+                
+                <li class="pc-item {{ request()->routeIs('departments.*') ? 'active' : '' }}">
+                    <a href="{{ route('departments.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-building"></i></span>
+                        <span class="pc-mtext">Departments</span>
+                    </a>
+                </li>
+                @endif
+
+                <li class="pc-item pc-caption">
+                    <label>Attendance</label>
+                    <i class="ti ti-clock"></i>
+                </li>
+                
+                <li class="pc-item {{ request()->routeIs('attendance.*') ? 'active' : '' }}">
+                    <a href="{{ route('attendance.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-calendar-check"></i></span>
+                        <span class="pc-mtext">Attendance Log</span>
+                    </a>
+                </li>
+                
+                @if(auth()->user() && auth()->user()->employee && !auth()->user()->employee->face_registered)
+                <li class="pc-item {{ request()->routeIs('face.register') ? 'active' : '' }}">
+                    <a href="{{ route('face.register') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-face-id"></i></span>
+                        <span class="pc-mtext">Register Face</span>
+                    </a>
+                </li>
+                @endif
+                
+                <li class="pc-item {{ request()->routeIs('face.recognize') ? 'active' : '' }}">
+                    <a href="{{ route('face.recognize') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-camera"></i></span>
+                        <span class="pc-mtext">Face Recognition</span>
+                    </a>
+                </li>
+
+                @if(auth()->user() && (auth()->user()->isAdmin() || auth()->user()->isManager()))
+                <li class="pc-item pc-caption">
+                    <label>Reports</label>
+                    <i class="ti ti-report"></i>
+                </li>
+                
+                <li class="pc-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
+                    <a href="{{ route('reports.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-chart-bar"></i></span>
+                        <span class="pc-mtext">Reports</span>
+                    </a>
+                </li>
+                @endif
+
+                <li class="pc-item pc-caption">
+                    <label>Profile</label>
+                    <i class="ti ti-user-circle"></i>
+                </li>
+                
+                <li class="pc-item {{ request()->routeIs('profile.show') ? 'active' : '' }}">
+                    <a href="{{ route('profile.show') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-id"></i></span>
+                        <span class="pc-mtext">My Profile</span>
+                    </a>
+                </li>
+                @endauth
+
+                @guest
+                <li class="pc-item">
+                    <a href="{{ route('login') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-login"></i></span>
+                        <span class="pc-mtext">Login</span>
+                    </a>
+                </li>
+                <li class="pc-item">
+                    <a href="{{ route('register') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+                        <span class="pc-mtext">Register</span>
+                    </a>
+                </li>
+                @endguest
+            </ul>
+            
+            @auth
+                @if(auth()->user() && auth()->user()->isAdmin())
+                <div class="card text-center">
+                    <div class="card-body">
+                        <img src="{{ asset('assets/images/img-navbar-card.png') }}" alt="images" class="img-fluid mb-2">
+                        <h5>System Info</h5>
+                        <p>Facial Recognition v1.0</p>
+                        <p class="text-muted small">Total Employees: {{ \App\Models\Employee::count() }}</p>
+                    </div>
+                </div>
+                @endif
+            @endauth
+        </div>
+    </div>
+</nav>
+<!-- [ Sidebar Menu ] end -->
