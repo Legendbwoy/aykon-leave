@@ -21,9 +21,9 @@
                 </a>
             </div>
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+                <div class="table-responsive rounded shadow-sm">
+                    <table class="table table-hover align-middle mb-0 bg-white rounded">
+                        <thead class="bg-light">
                             <tr>
                                 <th>Name</th>
                                 <th>Display Name</th>
@@ -40,24 +40,33 @@
                                 <td>{{ $role->description ?? 'N/A' }}</td>
                                 <td>
                                     @if($role->is_active)
-                                        <span class="badge bg-light-success">Active</span>
+                                        <span class="badge bg-success-subtle text-success">Active</span>
                                     @else
-                                        <span class="badge bg-light-danger">Inactive</span>
+                                        <span class="badge bg-danger-subtle text-danger">Inactive</span>
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('roles.edit', $role) }}" class="btn btn-sm btn-primary">
-                                        <i class="ti ti-edit"></i>
-                                    </a>
+                                    <a href="{{ route('roles.edit', $role) }}" class="btn btn-sm btn-primary"><i class="ti ti-edit"></i></a>
                                     <form action="{{ route('roles.destroy', $role) }}" method="POST" class="d-inline delete-form">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="ti ti-trash"></i>
-                                        </button>
+                                        <button type="submit" class="btn btn-sm btn-danger"><i class="ti ti-trash"></i></button>
                                     </form>
                                 </td>
                             </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    <i class="ti ti-inbox f-30 text-muted"></i>
+                                    <p class="mb-0">No roles found</p>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-center mt-3">
+                        {{ $roles->links() }}
+                    </div>
                             @empty
                             <tr>
                                 <td colspan="5" class="text-center py-4">

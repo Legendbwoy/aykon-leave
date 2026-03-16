@@ -19,6 +19,15 @@
                 <h5>Create New Employee</h5>
             </div>
             <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form action="{{ route('employees.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
@@ -48,14 +57,18 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="employee_id" class="form-label">Employee ID</label>
-                                <input type="text" class="form-control @error('employee_id') is-invalid @enderror"
-                                       id="employee_id" name="employee_id" value="{{ old('employee_id') }}" required>
-                                @error('employee_id')
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                       id="password" name="password" value="{{ old('password') }}" required>
+                                @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <small class="form-text text-muted">Default password can be changed after login.</small>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="department_id" class="form-label">Department</label>

@@ -23,17 +23,6 @@
                     @csrf
 
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="code" class="form-label">Department Code <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('code') is-invalid @enderror"
-                                       id="code" name="code" value="{{ old('code') }}" required>
-                                @error('code')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                <small class="form-text text-muted">Unique code for the department (e.g., HR, IT, FIN)</small>
-                            </div>
-                        </div>
 
                         <div class="col-md-6">
                             <div class="mb-3">

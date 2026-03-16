@@ -15,7 +15,8 @@ class RoleController extends Controller
 
     public function create()
     {
-        return view('roles.create');
+        $permissions = \App\Models\Permission::all();
+        return view('roles.create', compact('permissions'));
     }
 
     public function store(Request $request)
@@ -39,7 +40,8 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
-        return view('roles.edit', compact('role'));
+        $permissions = \App\Models\Permission::all();
+        return view('roles.edit', compact('role', 'permissions'));
     }
 
     public function update(Request $request, Role $role)

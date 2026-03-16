@@ -33,6 +33,10 @@ class AuthController extends Controller
                 ]);
             }
 
+            if (Auth::user()->force_password_change) {
+                return redirect()->route('profile.password')->with('warning', 'Please change your password before continuing.');
+            }
+
             return redirect()->intended('dashboard');
         }
 

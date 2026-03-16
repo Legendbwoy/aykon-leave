@@ -46,7 +46,7 @@ class EmployeeController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'department_id' => 'required|exists:departments,id',
-            'employee_id' => 'required|string|unique:employees',
+            'employee_id' => 'nullable|string|unique:employees',
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
             'hire_date' => 'required|date',
@@ -60,12 +60,13 @@ class EmployeeController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'employee',
+            'force_password_change' => true,
         ]);
 
         $employeeData = [
             'user_id' => $user->id,
             'department_id' => $request->department_id,
-            'employee_id' => $request->employee_id,
+            'employee_id' => $request->employee_id ?? \Str::uuid()->toString(),
             'phone' => $request->phone,
             'address' => $request->address,
             'hire_date' => $request->hire_date,
@@ -80,7 +81,7 @@ class EmployeeController extends Controller
 
         $employee = Employee::create($employeeData);
 
-        return redirect()->route('employees.index')
+        return redirect()->route('employees.show', $employee)
             ->with('success', 'Employee created successfully.');
     }
 

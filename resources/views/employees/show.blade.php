@@ -44,9 +44,6 @@
                     <a href="{{ route('employees.edit', $employee) }}" class="btn btn-primary">
                         <i class="ti ti-edit me-2"></i>Edit Employee
                     </a>
-                    <a href="{{ route('employees.qr-code', $employee) }}" class="btn btn-info">
-                        <i class="ti ti-qrcode me-2"></i>View QR Code
-                    </a>
                     <a href="{{ route('attendance.employee', $employee) }}" class="btn btn-secondary">
                         <i class="ti ti-calendar me-2"></i>View Attendance
                     </a>

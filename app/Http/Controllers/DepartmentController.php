@@ -22,14 +22,14 @@ class DepartmentController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:departments',
-            'code' => 'required|string|max:10|unique:departments',
+            'code' => 'nullable|string|max:36|unique:departments',
             'description' => 'nullable|string',
             'is_active' => 'boolean',
         ]);
 
         Department::create([
             'name' => $request->name,
-            'code' => $request->code,
+            'code' => $request->code ?? \Str::uuid()->toString(),
             'description' => $request->description,
             'is_active' => $request->boolean('is_active', true),
         ]);

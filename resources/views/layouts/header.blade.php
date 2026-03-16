@@ -47,13 +47,20 @@
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button">
                         <i class="ti ti-bell"></i>
                         @php
-                            $todayCount = \App\Models\Attendance::whereDate('check_in', now()->toDateString())
-                                ->whereNotNull('check_in')
-                                ->count();
-                            $pendingCount = \App\Models\Attendance::whereDate('check_in', now()->toDateString())
-                                ->whereNull('check_out')
-                                ->count();
-                            $notificationCount = $pendingCount;
+                            $user = auth()->user();
+                            if ($user->isAdmin() || $user->isManager()) {
+                                $todayCount = \App\Models\Attendance::whereDate('check_in', now()->toDateString())
+                                    ->whereNotNull('check_in')
+                                    ->count();
+                                $pendingCount = \App\Models\Attendance::whereDate('check_in', now()->toDateString())
+                                    ->whereNull('check_out')
+                                    ->count();
+                                $notificationCount = $pendingCount;
+                            } else {
+                                $todayCount = $user->employee ? $user->employee->attendances()->whereDate('check_in', now()->toDateString())->whereNotNull('check_in')->count() : 0;
+                                $pendingCount = $user->employee ? $user->employee->attendances()->whereDate('check_in', now()->toDateString())->whereNull('check_out')->count() : 0;
+                                $notificationCount = $pendingCount;
+                            }
                         @endphp
                         @if($notificationCount > 0)
                             <span class="badge bg-danger">{{ $notificationCount }}</span>
@@ -68,13 +75,20 @@
                         <div class="dropdown-header px-0 text-wrap header-notification-scroll position-relative" style="max-height: calc(100vh - 215px)">
                             <div class="list-group list-group-flush w-100">
                                 @php
-                                    $recentAttendances = \App\Models\Attendance::with('employee.user')
-                                        ->whereDate('check_in', now()->toDateString())
-                                        ->latest()
-                                        ->take(5)
-                                        ->get();
+                                    if ($user->isAdmin() || $user->isManager()) {
+                                        $recentAttendances = \App\Models\Attendance::with('employee.user')
+                                            ->whereDate('check_in', now()->toDateString())
+                                            ->latest()
+                                            ->take(5)
+                                            ->get();
+                                    } else {
+                                        $recentAttendances = $user->employee ? $user->employee->attendances()
+                                            ->whereDate('check_in', now()->toDateString())
+                                            ->latest()
+                                            ->take(5)
+                                            ->get() : collect();
+                                    }
                                 @endphp
-                                
                                 @forelse($recentAttendances as $attendance)
                                 <a class="list-group-item list-group-item-action" href="{{ route('attendance.show', $attendance) }}">
                                     <div class="d-flex">

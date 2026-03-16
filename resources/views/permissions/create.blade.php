@@ -1,0 +1,20 @@
+@extends('layouts.master')
+
+@section('content')
+<div class="container">
+    <h1>Create Permission</h1>
+    <form action="{{ route('permissions.store') }}" method="POST">
+        @csrf
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="guard_name" class="form-label">Guard</label>
+            <input type="text" class="form-control" id="guard_name" name="guard_name" value="web" required>
+        </div>
+        <button type="submit" class="btn btn-success">Create</button>
+        <a href="{{ route('permissions.index') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+@endsection

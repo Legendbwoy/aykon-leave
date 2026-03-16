@@ -38,9 +38,9 @@
                 </div>
 
                 <!-- Departments Table -->
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+                <div class="table-responsive rounded shadow-sm">
+                    <table class="table table-hover align-middle mb-0 bg-white rounded">
+                        <thead class="bg-light">
                             <tr>
                                 <th>Code</th>
                                 <th>Name</th>
@@ -58,6 +58,37 @@
                                 <td>{{ $department->description ?? 'N/A' }}</td>
                                 <td>{{ $department->employees()->count() }}</td>
                                 <td>
+                                    @if($department->is_active)
+                                        <span class="badge bg-success-subtle text-success">Active</span>
+                                    @else
+                                        <span class="badge bg-danger-subtle text-danger">Inactive</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('departments.show', $department) }}" class="btn btn-sm btn-info" title="View"><i class="ti ti-eye"></i></a>
+                                    <a href="{{ route('departments.edit', $department) }}" class="btn btn-sm btn-primary" title="Edit"><i class="ti ti-edit"></i></a>
+                                    @if($department->employees()->count() == 0)
+                                        <form action="{{ route('departments.destroy', $department) }}" method="POST" class="d-inline delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="ti ti-trash"></i></button>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="ti ti-inbox f-30 text-muted"></i>
+                                    <p class="mb-0">No departments found</p>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-center mt-3">
+                        {{ $departments->links() }}
+                    </div>
                                     @if($department->is_active)
                                         <span class="badge bg-light-success">Active</span>
                                     @else

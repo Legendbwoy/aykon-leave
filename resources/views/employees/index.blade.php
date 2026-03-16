@@ -49,15 +49,86 @@
                 </div>
                 
                 <!-- Employees Table -->
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+                <div class="table-responsive rounded shadow-sm">
+                    <table class="table table-hover align-middle mb-0 bg-white rounded">
+                        <thead class="bg-light">
                             <tr>
                                 <th>Employee</th>
                                 <th>Employee ID</th>
                                 <th>Department</th>
                                 <th>Position</th>
                                 <th>Phone</th>
+                                <th>Face Registered</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($employees as $employee)
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @if($employee->profile_photo)
+                                            <img src="{{ asset('storage/' . $employee->profile_photo) }}" alt="" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                        @else
+                                            <div class="rounded-circle bg-light-primary me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                <i class="ti ti-user"></i>
+                                            </div>
+                                        @endif
+                                        <div>
+                                            <h6 class="mb-0">{{ $employee->user->name }}</h6>
+                                            <small class="text-muted">{{ $employee->user->email }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><code>{{ $employee->employee_id }}</code></td>
+                                <td>{{ $employee->department->name ?? 'N/A' }}</td>
+                                <td>{{ $employee->position }}</td>
+                                <td>{{ $employee->phone ?? 'N/A' }}</td>
+                                <td>
+                                    @if($employee->face_registered)
+                                        <span class="badge bg-success-subtle text-success">Registered</span>
+                                    @else
+                                        <span class="badge bg-warning-subtle text-warning">Not Registered</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($employee->user->is_active)
+                                        <span class="badge bg-success-subtle text-success">Active</span>
+                                    @else
+                                        <span class="badge bg-danger-subtle text-danger">Inactive</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('employees.show', $employee) }}" class="btn btn-sm btn-info" title="View"><i class="ti ti-eye"></i></a>
+                                    <a href="{{ route('employees.edit', $employee) }}" class="btn btn-sm btn-primary" title="Edit"><i class="ti ti-edit"></i></a>
+                                    <a href="{{ route('employees.qr-code', $employee) }}" class="btn btn-sm btn-secondary" title="QR Code"><i class="ti ti-qrcode"></i></a>
+                                    <form action="{{ route('employees.toggle-status', $employee) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-warning" title="{{ $employee->user->is_active ? 'Deactivate' : 'Activate' }}">
+                                            <i class="ti ti-{{ $employee->user->is_active ? 'lock' : 'unlock' }}"></i>
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('employees.destroy', $employee) }}" method="POST" class="d-inline delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="ti ti-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="8" class="text-center py-4">
+                                    <i class="ti ti-inbox f-30 text-muted"></i>
+                                    <p class="mb-0">No employees found</p>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-center mt-3">
+                        {{ $employees->links() }}
+                    </div>
                                 <th>Face Registered</th>
                                 <th>Status</th>
                                 <th>Actions</th>
