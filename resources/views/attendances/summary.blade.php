@@ -16,30 +16,39 @@
             <button type="submit" class="btn btn-primary">Filter</button>
         </div>
     </form>
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Department</th>
-                <th>Present</th>
-                <th>Absent</th>
-                <th>Late</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($departmentSummary as $department => $summary)
+    <div class="table-responsive rounded shadow-sm">
+        <table class="table table-hover align-middle mb-0 bg-white rounded">
+            <thead class="bg-light">
+                <tr>
+                    <th>#</th>
+                    <th>Department</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Late</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($departmentSummary as $department => $summary)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $department }}</td>
-                    <td>{{ $summary['present'] }}</td>
-                    <td>{{ $summary['absent'] }}</td>
-                    <td>{{ $summary['late'] }}</td>
+                    <td><span class="badge bg-success-subtle text-success">{{ $summary['present'] }}</span></td>
+                    <td><span class="badge bg-danger-subtle text-danger">{{ $summary['absent'] }}</span></td>
+                    <td><span class="badge bg-warning-subtle text-warning">{{ $summary['late'] }}</span></td>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
-    <div class="d-flex justify-content-center">
-        {{ $summary->links() }}
+                @empty
+                <tr>
+                    <td colspan="5" class="text-center py-4">
+                        <i class="ti ti-inbox f-30 text-muted"></i>
+                        <p class="mb-0">No summary data found</p>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-center mt-3">
+            {{ $summary->links() }}
+        </div>
     </div>
 </div>
 @endsection

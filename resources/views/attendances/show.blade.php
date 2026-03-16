@@ -12,6 +12,6 @@
             <p class="card-text">Check Out: {{ $attendance->check_out }}</p>
         </div>
     </div>
-    <a href="{{ route('attendances.index') }}" class="btn btn-secondary mt-3">Back to List</a>
+    <a href="{{ route('attendance.index') }}" class="btn btn-secondary mt-3">Back to List</a>
 </div>
 @endsection

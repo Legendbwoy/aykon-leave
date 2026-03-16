@@ -101,6 +101,30 @@ Route::middleware('auth')->group(function () {
         return response()->json(['server_time' => now()->toDateTimeString()]);
     });
 
+    // TEST ENDPOINT - Remove after debugging
+Route::get('/test-qr', function() {
+    return response()->json([
+        'success' => true,
+        'message' => 'QR test endpoint working',
+        'time' => now()->format('Y-m-d H:i:s'),
+        'csrf_token' => csrf_token()
+    ]);
+});
+
+Route::post('/test-qr-post', function(Request $request) {
+    return response()->json([
+        'success' => true,
+        'message' => 'POST test working',
+        'received_data' => $request->all(),
+        'time' => now()->format('Y-m-d H:i:s')
+    ]);
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/simple-qr', [App\Http\Controllers\SimpleQrController::class, 'showScanner'])->name('simple.qr');
+    Route::post('/simple-qr/process', [App\Http\Controllers\SimpleQrController::class, 'processScan'])->name('simple.qr.process');
+});
+
 // Fallback route
 Route::fallback(function () {
     return redirect()->route('dashboard');
