@@ -25,9 +25,9 @@ class DatabaseSeeder extends Seeder
         $this->command->info('');
         $this->command->info('Default Login Credentials:');
         $this->command->info('--------------------------');
-        $this->command->info('Admin   : admin@attendance.com / admin123');
-        $this->command->info('Manager : manager@attendance.com / manager123');
-        $this->command->info('Employee: employee@attendance.com / employee123');
+        $this->command->info('Admin   : superadmin@aykon.com / Admin123!');
+        $this->command->info('Manager : hr.manager@aykon.com / Manager123!');
+        $this->command->info('Employee: john.doe@aykon.com / Employee123!');
         $this->command->info('');
         $this->command->info('All employee passwords: password123');
     }

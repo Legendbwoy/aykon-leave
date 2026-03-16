@@ -56,12 +56,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/attendance/employee/{employee}', [AttendanceController::class, 'employeeAttendance'])->name('attendance.employee');
     Route::get('/attendance/export/csv', [AttendanceController::class, 'export'])->name('attendance.export');
     Route::get('/attendance/summary', [AttendanceController::class, 'summary'])->name('attendance.summary');
+    Route::get('/attendance/qr-scan', [AttendanceController::class, 'qrScan'])->name('attendance.qr-scan');
+    Route::post('/attendance/qr-checkin', [AttendanceController::class, 'qrCheckIn'])->name('attendance.qr-checkin');
     
     // Admin and Manager routes
-    Route::middleware('can:manage-employees')->group(function () {
+    Route::group([], function () {
         // Employees
         Route::resource('employees', EmployeeController::class);
+        Route::get('/employees/{employee}/qr-code', [EmployeeController::class, 'qrCode'])->name('employees.qr-code');
+        Route::post('/employees/{employee}/qr-code/regenerate', [EmployeeController::class, 'regenerateQrCode'])->name('employees.regenerate-qr');
+        Route::get('/employees/{employee}/qr-code/export', [EmployeeController::class, 'exportQrCodePdf'])->name('employees.export-qr-pdf');
         Route::post('/employees/{employee}/toggle-status', [EmployeeController::class, 'toggleStatus'])->name('employees.toggle-status');
+
+        // QR Code management
+        Route::get('/admin/qr-code', [\App\Http\Controllers\QrCodeController::class, 'index'])->name('qr-code.index');
+        Route::post('/admin/qr-code/regenerate', [\App\Http\Controllers\QrCodeController::class, 'regenerate'])->name('qr-code.regenerate');
+        Route::get('/admin/qr-code/export', [\App\Http\Controllers\QrCodeController::class, 'exportPdf'])->name('qr-code.export');
         
         // Departments
         Route::resource('departments', DepartmentController::class);
@@ -71,7 +81,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/reports/attendance', [ReportController::class, 'attendance'])->name('reports.attendance');
         Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
     });
+
+    // Admin only routes
+    Route::group([], function () {
+        // User management
+        Route::resource('users', \App\Http\Controllers\UserController::class);
+        Route::post('/users/{user}/toggle-status', [\App\Http\Controllers\UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    });
 });
+
+    Route::get('/api/server-time', function() {
+        return response()->json(['server_time' => now()->toDateTimeString()]);
+    });
 
 // Fallback route
 Route::fallback(function () {

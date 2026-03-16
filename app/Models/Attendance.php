@@ -22,6 +22,7 @@ class Attendance extends Model
         'work_hours',
         'status',
         'notes',
+        'date',
     ];
 
     protected $casts = [
@@ -30,6 +31,7 @@ class Attendance extends Model
         'check_in_confidence' => 'decimal:2',
         'check_out_confidence' => 'decimal:2',
         'work_hours' => 'decimal:2',
+        'date' => 'date',
     ];
 
     public function employee()

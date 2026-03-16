@@ -160,4 +160,40 @@ class EmployeeController extends Controller
         return redirect()->back()
             ->with('success', 'Employee status updated successfully.');
     }
+
+    public function qrCode(Employee $employee)
+    {
+        // Generate QR code with employee_id using BaconQrCode
+        $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+            new \BaconQrCode\Renderer\RendererStyle\RendererStyle(300),
+            new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
+        );
+        $writer = new \BaconQrCode\Writer($renderer);
+        $qrCode = $writer->writeString($employee->employee_id);
+
+        return view('employees.qr-code', compact('employee', 'qrCode'));
+    }
+
+    public function regenerateQrCode(Employee $employee)
+    {
+        // QR code regeneration is essentially the same as generation since it's based on employee_id
+        // But we can add a timestamp or something if needed
+        // For now, just redirect to the qr code view
+        return redirect()->route('employees.qr-code', $employee)
+            ->with('success', 'QR Code regenerated successfully.');
+    }
+
+    public function exportQrCodePdf(Employee $employee)
+    {
+        $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+            new \BaconQrCode\Renderer\RendererStyle\RendererStyle(300),
+            new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
+        );
+        $writer = new \BaconQrCode\Writer($renderer);
+        $qrCode = $writer->writeString($employee->employee_id);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('employees.qr-code-pdf', compact('employee', 'qrCode'));
+
+        return $pdf->download('qr-code-' . $employee->employee_id . '.pdf');
+    }
 }

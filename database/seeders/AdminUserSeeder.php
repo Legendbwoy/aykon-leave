@@ -33,10 +33,10 @@ class AdminUserSeeder extends Seeder
 
         // Create admin user
         $admin = User::firstOrCreate(
-            ['email' => 'admin@attendance.com'],
+            ['email' => 'superadmin@aykon.com'],
             [
-                'name' => 'System Administrator',
-                'password' => Hash::make('admin123'),
+                'name' => 'Super Administrator',
+                'password' => Hash::make('Admin123!'),
                 'role' => 'admin',
                 'is_active' => true,
                 'email_verified_at' => now(),
@@ -49,21 +49,21 @@ class AdminUserSeeder extends Seeder
             [
                 'department_id' => $adminDept->id,
                 'employee_id' => 'ADM001',
-                'phone' => '+1234567890',
-                'address' => 'Head Office',
-                'hire_date' => now()->subYears(2),
-                'position' => 'System Administrator',
-                'salary' => 75000.00,
+                'phone' => '+1-555-0100',
+                'address' => 'Corporate Headquarters',
+                'hire_date' => now()->subYears(3),
+                'position' => 'Chief Technology Officer',
+                'salary' => 120000.00,
                 'face_registered' => false,
             ]
         );
 
         // Create manager user
         $manager = User::firstOrCreate(
-            ['email' => 'manager@attendance.com'],
+            ['email' => 'hr.manager@aykon.com'],
             [
-                'name' => 'Department Manager',
-                'password' => Hash::make('manager123'),
+                'name' => 'Sarah Johnson',
+                'password' => Hash::make('Manager123!'),
                 'role' => 'manager',
                 'is_active' => true,
                 'email_verified_at' => now(),
@@ -76,21 +76,21 @@ class AdminUserSeeder extends Seeder
             [
                 'department_id' => $hrDept->id,
                 'employee_id' => 'MGR001',
-                'phone' => '+1234567891',
-                'address' => 'HR Department',
-                'hire_date' => now()->subYear(),
-                'position' => 'HR Manager',
-                'salary' => 65000.00,
+                'phone' => '+1-555-0101',
+                'address' => 'HR Department, Building A',
+                'hire_date' => now()->subYears(2),
+                'position' => 'Human Resources Manager',
+                'salary' => 85000.00,
                 'face_registered' => false,
             ]
         );
 
         // Create test employee
         $employee = User::firstOrCreate(
-            ['email' => 'employee@attendance.com'],
+            ['email' => 'john.doe@aykon.com'],
             [
                 'name' => 'John Doe',
-                'password' => Hash::make('employee123'),
+                'password' => Hash::make('Employee123!'),
                 'role' => 'employee',
                 'is_active' => true,
                 'email_verified_at' => now(),
@@ -103,18 +103,18 @@ class AdminUserSeeder extends Seeder
             [
                 'department_id' => $hrDept->id,
                 'employee_id' => 'EMP001',
-                'phone' => '+1234567892',
-                'address' => '123 Main Street',
-                'hire_date' => now()->subMonths(6),
-                'position' => 'HR Assistant',
-                'salary' => 45000.00,
+                'phone' => '+1-555-0102',
+                'address' => '456 Employee Lane, Suite 100',
+                'hire_date' => now()->subMonths(8),
+                'position' => 'HR Coordinator',
+                'salary' => 55000.00,
                 'face_registered' => false,
             ]
         );
 
         $this->command->info('Admin, Manager, and Test Employee users created successfully!');
-        $this->command->info('Admin Login: admin@attendance.com / admin123');
-        $this->command->info('Manager Login: manager@attendance.com / manager123');
-        $this->command->info('Employee Login: employee@attendance.com / employee123');
+        $this->command->info('Admin Login: superadmin@aykon.com / Admin123!');
+        $this->command->info('Manager Login: hr.manager@aykon.com / Manager123!');
+        $this->command->info('Employee Login: john.doe@aykon.com / Employee123!');
     }
 }

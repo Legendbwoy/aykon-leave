@@ -79,10 +79,10 @@ class AttendanceController extends BaseController
      */
     public function create()
     {
-        // Check if user can create attendance
-        if (!Auth::user()->isAdmin() && !Auth::user()->isManager()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // Admin has unrestricted access
+        // if (!\Gate::allows('manage-employees')) {
+        //     abort(403, 'Unauthorized action.');
+        // }
         
         $employees = Employee::with('user')->whereHas('user', function($q) {
             $q->where('is_active', true);
@@ -96,10 +96,11 @@ class AttendanceController extends BaseController
      */
     public function store(Request $request)
     {
+        // Admin has unrestricted access
         // Check if user can create attendance
-        if (!Auth::user()->isAdmin() && !Auth::user()->isManager()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (!\Gate::allows('manage-employees')) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
@@ -161,17 +162,15 @@ class AttendanceController extends BaseController
     {
         $user = Auth::user();
         
-        // Check if user can edit this attendance
-        if ($user->isAdmin()) {
-            // Admin can edit all
-        } elseif ($user->isManager()) {
-            // Manager can only edit their department
-            if ($user->employee->department_id !== $attendance->employee->department_id) {
-                abort(403, 'Unauthorized to edit this attendance record.');
-            }
-        } else {
-            // Employees cannot edit
-            abort(403, 'Unauthorized to edit attendance records.');
+        // Admin has unrestricted access
+        // Check if user can edit attendance
+        // if (!\Gate::allows('manage-employees')) {
+        //     abort(403, 'Unauthorized to edit attendance records.');
+        // }
+        
+        // Additional check for managers
+        if ($user->isManager() && $user->employee->department_id !== $attendance->employee->department_id) {
+            abort(403, 'Unauthorized to edit this attendance record.');
         }
         
         $employees = Employee::with('user')->whereHas('user', function($q) {
@@ -188,17 +187,15 @@ class AttendanceController extends BaseController
     {
         $user = Auth::user();
         
-        // Check if user can update this attendance
-        if ($user->isAdmin()) {
-            // Admin can update all
-        } elseif ($user->isManager()) {
-            // Manager can only update their department
-            if ($user->employee->department_id !== $attendance->employee->department_id) {
-                abort(403, 'Unauthorized to update this attendance record.');
-            }
-        } else {
-            // Employees cannot update
-            abort(403, 'Unauthorized to update attendance records.');
+        // Admin has unrestricted access
+        // Check if user can update attendance
+        // if (!\Gate::allows('manage-employees')) {
+        //     abort(403, 'Unauthorized to update attendance records.');
+        // }
+        
+        // Additional check for managers
+        if ($user->isManager() && $user->employee->department_id !== $attendance->employee->department_id) {
+            abort(403, 'Unauthorized to update this attendance record.');
         }
 
         $request->validate([
@@ -229,12 +226,11 @@ class AttendanceController extends BaseController
      */
     public function destroy(Attendance $attendance)
     {
-        $user = Auth::user();
-        
+        // Admin has unrestricted access
         // Only admin can delete attendance records
-        if (!$user->isAdmin()) {
-            abort(403, 'Unauthorized to delete attendance records.');
-        }
+        // if (!\Gate::allows('manage-users')) {
+        //     abort(403, 'Unauthorized to delete attendance records.');
+        // }
         
         $attendance->delete();
 
@@ -276,12 +272,11 @@ class AttendanceController extends BaseController
      */
     public function export(Request $request)
     {
-        $user = Auth::user();
-        
+        // Admin has unrestricted access
         // Only admin and manager can export
-        if (!$user->isAdmin() && !$user->isManager()) {
-            abort(403, 'Unauthorized to export attendance records.');
-        }
+        // if (!\Gate::allows('manage-employees')) {
+        //     abort(403, 'Unauthorized to export attendance records.');
+        // }
         
         // Logic for exporting attendance (CSV, Excel, etc.)
         $query = Attendance::with(['employee.user', 'employee.department']);
@@ -348,10 +343,11 @@ class AttendanceController extends BaseController
     {
         $user = Auth::user();
         
+        // Admin has unrestricted access
         // Only admin and manager can view summary
-        if (!$user->isAdmin() && !$user->isManager()) {
-            abort(403, 'Unauthorized to view attendance summary.');
-        }
+        // if (!\Gate::allows('manage-employees')) {
+        //     abort(403, 'Unauthorized to view attendance summary.');
+        // }
         
         $startDate = $request->get('start_date', Carbon::now()->startOfMonth());
         $endDate = $request->get('end_date', Carbon::now()->endOfMonth());
@@ -396,54 +392,102 @@ class AttendanceController extends BaseController
     /**
      * Mark attendance manually (for testing purposes)
      */
-    public function markAttendance(Request $request)
+    public function qrCheckIn(Request $request)
     {
-        $user = Auth::user();
-        
-        if (!$user->employee) {
-            return response()->json(['error' => 'No employee record found'], 404);
+        $request->validate([
+            'qr_data' => 'required|string',
+            'device_time' => 'required|date',
+        ]);
+
+        // Validate device time against server time
+        $deviceTime = Carbon::parse($request->device_time);
+        $serverTime = Carbon::now();
+        $timeDifference = abs($deviceTime->diffInMinutes($serverTime));
+
+        if ($timeDifference > 5) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Device time does not match server time. Please update your device time and try again.',
+                'time_mismatch' => true,
+                'server_time' => $serverTime->format('Y-m-d H:i:s'),
+                'device_time' => $deviceTime->format('Y-m-d H:i:s')
+            ], 400);
         }
 
-        $todayAttendance = Attendance::where('employee_id', $user->employee->id)
+        // Validate QR token
+        $qrCode = \App\Models\QrCode::where('token', $request->qr_data)
+            ->where(function ($query) {
+                $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
+            ->latest()
+            ->first();
+
+        if (! $qrCode) {
+            return response()->json(['success' => false, 'message' => 'Invalid or expired QR code'], 404);
+        }
+
+        $user = Auth::user();
+        if (! $user->employee) {
+            return response()->json(['success' => false, 'message' => 'No employee record found'], 404);
+        }
+
+        $employee = $user->employee;
+
+        $todayAttendance = Attendance::where('employee_id', $employee->id)
             ->whereDate('check_in', Carbon::today())
             ->first();
 
         if (!$todayAttendance) {
             // Check in
             $attendance = Attendance::create([
-                'employee_id' => $user->employee->id,
+                'employee_id' => $employee->id,
                 'check_in' => Carbon::now(),
-                'check_in_method' => 'manual',
+                'check_in_method' => 'qr',
                 'status' => 'present',
                 'date' => Carbon::today()->toDateString(),
             ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Check in successful',
+                'message' => 'QR check-in successful',
                 'type' => 'check_in',
-                'time' => $attendance->check_in->format('H:i:s')
+                'time' => $attendance->check_in->format('H:i:s'),
             ]);
-        } elseif (!$todayAttendance->check_out) {
+        } elseif (! $todayAttendance->check_out) {
             // Check out
             $todayAttendance->update([
                 'check_out' => Carbon::now(),
-                'check_out_method' => 'manual',
+                'check_out_method' => 'qr',
             ]);
             $todayAttendance->calculateWorkHours();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Check out successful',
+                'message' => 'QR check-out successful',
                 'type' => 'check_out',
                 'time' => $todayAttendance->check_out->format('H:i:s'),
-                'hours' => $todayAttendance->work_hours
-            ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Already checked in and out today'
+                'hours' => $todayAttendance->work_hours,
             ]);
         }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Already checked in and out today',
+        ]);
+    }
+
+    public function qrScan()
+    {
+        // Check if user is authenticated
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Please login to access QR scanning.');
+        }
+
+        // Check if user has employee record
+        if (!auth()->user()->employee) {
+            return redirect()->route('dashboard')->with('error', 'Employee record not found. Please contact administrator.');
+        }
+
+        return view('attendances.qr-scan');
     }
 }

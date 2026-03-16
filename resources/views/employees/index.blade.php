@@ -109,6 +109,10 @@
                                        class="btn btn-sm btn-primary" title="Edit">
                                         <i class="ti ti-edit"></i>
                                     </a>
+                                    <a href="{{ route('employees.qr-code', $employee) }}" 
+                                       class="btn btn-sm btn-secondary" title="QR Code">
+                                        <i class="ti ti-qrcode"></i>
+                                    </a>
                                     <form action="{{ route('employees.toggle-status', $employee) }}" 
                                           method="POST" class="d-inline">
                                         @csrf

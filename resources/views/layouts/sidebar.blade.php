@@ -64,6 +64,13 @@
                         <span class="pc-mtext">Face Recognition</span>
                     </a>
                 </li>
+                
+                <li class="pc-item {{ request()->routeIs('attendance.qr-scan') ? 'active' : '' }}">
+                    <a href="{{ route('attendance.qr-scan') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-qrcode"></i></span>
+                        <span class="pc-mtext">QR Code Scan</span>
+                    </a>
+                </li>
 
                 @if(auth()->user() && (auth()->user()->isAdmin() || auth()->user()->isManager()))
                 <li class="pc-item pc-caption">
@@ -77,6 +84,22 @@
                         <span class="pc-mtext">Reports</span>
                     </a>
                 </li>
+
+                <li class="pc-item {{ request()->routeIs('qr-code.*') ? 'active' : '' }}">
+                    <a href="{{ route('qr-code.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-qrcode"></i></span>
+                        <span class="pc-mtext">QR Code</span>
+                    </a>
+                </li>
+
+                @if(auth()->user() && auth()->user()->isAdmin())
+                <li class="pc-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                    <a href="{{ route('users.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-shield-check"></i></span>
+                        <span class="pc-mtext">User Management</span>
+                    </a>
+                </li>
+                @endif
                 @endif
 
                 <li class="pc-item pc-caption">

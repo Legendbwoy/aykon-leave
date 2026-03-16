@@ -63,8 +63,11 @@
                     
                     @if(!$todayAttendance->check_out)
                         <div class="text-center mt-3">
-                            <a href="{{ route('face.recognize') }}" class="btn btn-primary">
-                                <i class="ti ti-camera me-2"></i>Check Out Now
+                            <a href="{{ route('attendance.qr-scan') }}" class="btn btn-primary me-2">
+                                <i class="ti ti-qrcode me-2"></i>Check Out via QR Scan
+                            </a>
+                            <a href="{{ route('face.recognize') }}" class="btn btn-secondary">
+                                <i class="ti ti-camera me-2"></i>Check Out via Face Recognition
                             </a>
                         </div>
                     @endif
@@ -74,10 +77,15 @@
                             <i class="ti ti-alert-circle f-30"></i>
                         </div>
                         <h5>You haven't checked in today</h5>
-                        <p class="text-muted mb-3">Please use face recognition to mark your attendance</p>
-                        <a href="{{ route('face.recognize') }}" class="btn btn-primary">
-                            <i class="ti ti-camera me-2"></i>Check In Now
-                        </a>
+                        <p class="text-muted mb-3">Choose a method below to mark your attendance</p>
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="{{ route('attendance.qr-scan') }}" class="btn btn-primary">
+                                <i class="ti ti-qrcode me-2"></i>Check In via QR Scan
+                            </a>
+                            <a href="{{ route('face.recognize') }}" class="btn btn-secondary">
+                                <i class="ti ti-camera me-2"></i>Check In via Face Recognition
+                            </a>
+                        </div>
                     </div>
                 @endif
             </div>
