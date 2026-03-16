@@ -52,12 +52,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/face/recognize', [FaceRecognitionController::class, 'recognize'])->name('face.recognize.match');
     
     // Attendance
-    Route::resource('attendance', AttendanceController::class);
+    Route::get('/attendance/qr-scan', [AttendanceController::class, 'qrScan'])->name('attendance.qr-scan');
+    Route::post('/attendance/qr-checkin', [AttendanceController::class, 'qrCheckIn'])->name('attendance.qr-checkin');
     Route::get('/attendance/employee/{employee}', [AttendanceController::class, 'employeeAttendance'])->name('attendance.employee');
     Route::get('/attendance/export/csv', [AttendanceController::class, 'export'])->name('attendance.export');
     Route::get('/attendance/summary', [AttendanceController::class, 'summary'])->name('attendance.summary');
-    Route::get('/attendance/qr-scan', [AttendanceController::class, 'qrScan'])->name('attendance.qr-scan');
-    Route::post('/attendance/qr-checkin', [AttendanceController::class, 'qrCheckIn'])->name('attendance.qr-checkin');
+    Route::resource('attendance', AttendanceController::class);
     
     // Admin and Manager routes
     Route::group([], function () {
@@ -87,6 +87,13 @@ Route::middleware('auth')->group(function () {
         // User management
         Route::resource('users', \App\Http\Controllers\UserController::class);
         Route::post('/users/{user}/toggle-status', [\App\Http\Controllers\UserController::class, 'toggleStatus'])->name('users.toggle-status');
+
+        // Role & permission management
+        Route::resource('roles', \App\Http\Controllers\RoleController::class);
+        Route::resource('permissions', \App\Http\Controllers\PermissionController::class);
+
+        // System settings
+        Route::resource('settings', \App\Http\Controllers\SettingsController::class)->only(['index', 'edit', 'update']);
     });
 });
 

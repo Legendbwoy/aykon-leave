@@ -399,12 +399,12 @@ class AttendanceController extends BaseController
             'device_time' => 'required|date',
         ]);
 
-        // Validate device time against server time
+        // Validate device time against server time (allow 10 minutes difference)
         $deviceTime = Carbon::parse($request->device_time);
         $serverTime = Carbon::now();
         $timeDifference = abs($deviceTime->diffInMinutes($serverTime));
 
-        if ($timeDifference > 5) {
+        if ($timeDifference > 10) {
             return response()->json([
                 'success' => false,
                 'message' => 'Device time does not match server time. Please update your device time and try again.',
@@ -428,7 +428,7 @@ class AttendanceController extends BaseController
 
         $user = Auth::user();
         if (! $user->employee) {
-            return response()->json(['success' => false, 'message' => 'No employee record found'], 404);
+            return response()->json(['success' => false, 'message' => 'You must be an employee to check in/out. Please contact administrator.'], 403);
         }
 
         $employee = $user->employee;
@@ -478,16 +478,8 @@ class AttendanceController extends BaseController
 
     public function qrScan()
     {
-        // Check if user is authenticated
-        if (!auth()->check()) {
-            return redirect()->route('login')->with('error', 'Please login to access QR scanning.');
-        }
-
-        // Check if user has employee record
-        if (!auth()->user()->employee) {
-            return redirect()->route('dashboard')->with('error', 'Employee record not found. Please contact administrator.');
-        }
-
+        // Allow all authenticated users to access the QR scanning page
+        // The actual check-in will validate employee status
         return view('attendances.qr-scan');
     }
 }

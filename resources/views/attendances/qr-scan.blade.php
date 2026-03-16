@@ -110,6 +110,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (type === 'success') {
             resultDiv.style.display = 'block';
             document.getElementById('result-text').textContent = message;
+            // Add visual styling for redirect message
+            resultDiv.classList.add('alert-success');
         } else if (type === 'error') {
             errorDiv.style.display = 'block';
             document.getElementById('error-text').textContent = message;
@@ -147,7 +149,14 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showResult(`${data.message} at ${data.time}`, 'success');
+                showResult(`${data.message} at ${data.time}. Redirecting to dashboard...`, 'success');
+                // Disable scan buttons after successful scan
+                startBtn.disabled = true;
+                stopBtn.disabled = true;
+                // Redirect to dashboard after 2 seconds
+                setTimeout(() => {
+                    window.location.href = '{{ route('dashboard') }}';
+                }, 2000);
             } else if (data.time_mismatch) {
                 showResult(`Time mismatch detected. Server time: ${data.server_time}, Device time: ${data.device_time}`, 'time-mismatch');
             } else {

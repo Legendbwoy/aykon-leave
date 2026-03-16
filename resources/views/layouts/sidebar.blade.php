@@ -93,10 +93,36 @@
                 </li>
 
                 @if(auth()->user() && auth()->user()->isAdmin())
+                <li class="pc-item pc-caption">
+                    <label>Administration</label>
+                    <i class="ti ti-settings"></i>
+                </li>
+
                 <li class="pc-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
                     <a href="{{ route('users.index') }}" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-shield-check"></i></span>
                         <span class="pc-mtext">User Management</span>
+                    </a>
+                </li>
+
+                <li class="pc-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
+                    <a href="{{ route('roles.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-user-check"></i></span>
+                        <span class="pc-mtext">Role Management</span>
+                    </a>
+                </li>
+
+                <li class="pc-item {{ request()->routeIs('permissions.*') ? 'active' : '' }}">
+                    <a href="{{ route('permissions.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-lock"></i></span>
+                        <span class="pc-mtext">Permissions</span>
+                    </a>
+                </li>
+
+                <li class="pc-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+                    <a href="{{ route('settings.index') }}" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-settings-2"></i></span>
+                        <span class="pc-mtext">System Settings</span>
                     </a>
                 </li>
                 @endif

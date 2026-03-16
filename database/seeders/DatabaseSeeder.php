@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminUserSeeder::class);
         $this->call(EmployeeSeeder::class);
         $this->call(AttendanceSeeder::class);
+        $this->call(RolePermissionSeeder::class);
+        $this->call(SettingsSeeder::class);
         
         $this->command->info('=====================================');
         $this->command->info('Database seeding completed successfully!');
