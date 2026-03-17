@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-sm my-1">
                 <p class="m-0">
-                    {{ config('app.name') }} v1.0 &#9829; crafted with care by Your Company
+                    {{ config('app.name') }} v1.0 &#9829; crafted with care by <a href="https://aykonsult.com/about.html" target="_blank">AYKON INFORMATION SYSTEMS</a>. All rights reserved @ {{ date('Y') }}.
                 </p>
             </div>
             <div class="col-auto my-1">

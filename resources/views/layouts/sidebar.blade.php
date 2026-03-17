@@ -49,6 +49,7 @@
                     </a>
                 </li>
                 
+                <!-- Face Registration - Commented Out
                 @if(auth()->user() && auth()->user()->employee && !auth()->user()->employee->face_registered)
                 <li class="pc-item {{ request()->routeIs('face.register') ? 'active' : '' }}">
                     <a href="{{ route('face.register') }}" class="pc-link">
@@ -57,13 +58,16 @@
                     </a>
                 </li>
                 @endif
+                -->
                 
+                <!-- Face Recognition - Commented Out
                 <li class="pc-item {{ request()->routeIs('face.recognize') ? 'active' : '' }}">
                     <a href="{{ route('face.recognize') }}" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-camera"></i></span>
                         <span class="pc-mtext">Face Recognition</span>
                     </a>
                 </li>
+                -->
                 
                 <li class="pc-item {{ request()->routeIs('attendance.qr-scan') ? 'active' : '' }}">
                     <a href="{{ route('attendance.qr-scan') }}" class="pc-link">
@@ -88,7 +92,7 @@
                 <li class="pc-item {{ request()->routeIs('qr-code.*') ? 'active' : '' }}">
                     <a href="{{ route('qr-code.index') }}" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-qrcode"></i></span>
-                        <span class="pc-mtext">QR Code</span>
+                        <span class="pc-mtext">QR Code Management</span>
                     </a>
                 </li>
 
@@ -163,7 +167,7 @@
                     <div class="card-body">
                         <img src="{{ asset('assets/images/img-navbar-card.png') }}" alt="images" class="img-fluid mb-2">
                         <h5>System Info</h5>
-                        <p>Facial Recognition v1.0</p>
+                        <p>QR Code Attendance System</p>
                         <p class="text-muted small">Total Employees: {{ \App\Models\Employee::count() }}</p>
                     </div>
                 </div>
